@@ -22,7 +22,7 @@ except ImportError:
 # O IP do servidor-alvo que você está monitorando.
 # IMPORTANTE: Para simulação, use o IP da sua máquina na rede local (ex: 192.168.1.5).
 # Se usar '127.0.0.1', apenas o tráfego gerado na própria máquina será capturado.
-SERVER_IP = '127.0.0.1' # IP Padrão para iniciar. TROQUE ESTE IP!
+SERVER_IP = '192.168.0.22' # IP Padrão para iniciar. TROQUE ESTE IP!
 WINDOW_SIZE = 5  # Janela de tempo em segundos
 lock = threading.Lock()
 windows = []
