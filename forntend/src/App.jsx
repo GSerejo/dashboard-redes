@@ -167,7 +167,7 @@ export default function App() {
     <div className="min-h-screen bg-gray-50 p-6 font-sans">
       <header className="mb-8 text-center">
         <h1 className="text-4xl font-extrabold text-gray-900">Monitoramento de Tráfego do Servidor</h1>
-        <p className="text-xl text-gray-600 mt-2">Análise em Tempo Real (Atualização a cada 2s)</p>
+        <p className="text-xl text-gray-600 mt-2">Análise em Tempo Real (Atualização a cada 5s)</p>
       </header>
 
       {/* Gráfico Principal */}
