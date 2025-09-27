@@ -77,7 +77,7 @@ export default function App() {
 
   useEffect(() => {
     fetchData() // Chama a função na montagem
-    const iv = setInterval(fetchData, 2000) // E a cada 2 segundos
+    const iv = setInterval(fetchData, 5000) // E a cada 5 segundos
     return () => clearInterval(iv)
   }, []) // Dependências vazias
 
