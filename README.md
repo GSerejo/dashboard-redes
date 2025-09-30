@@ -1,85 +1,57 @@
 Dashboard de Tráfego de Servidor (Tempo Real)
 Visão Geral
-Este é um projeto universitário que implementa um dashboard de monitoramento de tráfego de rede em tempo real. Ele captura pacotes de/para um servidor-alvo, agrega os dados em janelas de 5 segundos por IP de cliente e oferece um recurso de drill-down para visualizar a quebra de tráfego por protocolo (HTTP, FTP, TCP, etc.).
+Protótipo para capturar tráfego de/para um servidor específico e exibir janelas de 5s agregadas por cliente (IP). O dashboard oferece:
 
-Arquitetura do Projeto
-Backend (Python/FastAPI):
+Gráfico Principal: Volume de tráfego de Entrada/Saída por Cliente (IP).
 
-Utiliza Scapy para captura e processamento de pacotes.
+Drill Down Interativo: Ao clicar na barra do cliente, um modal exibe a quebra detalhada por protocolo (HTTP, FTP, SSH, SMTP, DNS, etc.).
 
-Agrega dados em tempo real em janelas de 5 segundos.
+Resumo de Protocolos: Seção com gráficos de rosca (Doughnut Charts) mostrando a distribuição percentual do tráfego total por protocolo.
 
-Expõe uma API RESTful para servir os dados ao frontend.
+Como Rodar (Ambiente Local)
+Pré-requisitos
+Python 3.x e Node.js instalados.
 
-Frontend (React/Vite):
+Windows: Instale o Npcap e marque a opção "Install Npcap in WinPcap API-compatible Mode" para que a captura de pacotes funcione.
 
-Dashboard interativo que consome a API RESTful.
+1. Backend (API e Coletor de Pacotes)
+Configuração do IP Alvo: Defina o endereço IP da máquina que você deseja monitorar.
 
-Utiliza Chart.js para renderizar gráficos de barras empilhados.
+Altere a variável SERVER_IP no arquivo backend/app.py para o IP real da sua máquina (ex: 192.168.0.22).
 
-O gráfico é atualizado a cada 5 segundos.
+Instalar Dependências: Certifique-se de estar no diretório raiz do projeto e use seu ambiente virtual (.venv).
 
-Permite a análise de drill-down ao clicar nas barras do cliente.
+pip install -r backend/requirements.txt
 
-Como Rodar Localmente
-Certifique-se de estar usando ambientes virtuais (.venv) para o Python e o Node.js.
+Rodar a API:
 
-1. Configuração do Backend (Python/FastAPI)
-O backend roda na porta 8000.
-
-Instalação do Driver de Captura (Apenas Windows):
-
-Para que a Scapy funcione no Windows, você DEVE instalar o driver Npcap.
-
-Durante a instalação, marque obrigatoriamente a opção: "Install Npcap in WinPcap API-compatible Mode".
-
-Definir o IP do Servidor-Alvo:
-
-No arquivo backend/app.py, altere a variável SERVER_IP para o endereço IP local (LAN) da sua máquina (ex: 192.168.0.22) para monitorar o tráfego externo. Use 127.0.0.1 apenas para testes de loopback.
-
-Instalar Dependências:
-
-cd backend
-pip install -r requirements.txt
-
-Executar o Backend:
-
-Devido à Scapy e à captura de pacotes, pode ser necessário rodar com privilégios.
-
-# Execute a partir da pasta raiz do projeto!
-# (Ex: C:\Users\user\project>)
+# Execute a partir da pasta raiz do projeto
 sudo uvicorn backend.app:app --host 0.0.0.0 --port 8000
+# NOTA: O 'sudo' (ou permissões de administrador no Windows) é NECESSÁRIO 
+# para que a Scapy consiga realizar a captura de pacotes na rede.
 
-2. Configuração do Frontend (React/Vite)
-O frontend geralmente roda na porta 5173 (Vite).
-
+2. Frontend (Dashboard)
 Instalar Dependências:
 
-cd frontend
+cd frontend 
 npm install
 
-Executar o Frontend:
+Rodar o Servidor de Desenvolvimento (Vite):
 
 npm run dev
 
-Abra o navegador em http://localhost:5173.
+Acessar: Abra o navegador em http://localhost:5173 (porta padrão do Vite).
 
-Geração de Tráfego (Testes de Carga)
-Para popular o dashboard, gere tráfego ativo e direcional.
+Testes e Simulação de Carga
+Para ver dados e testar todos os protocolos, certifique-se de que os serviços (HTTP, FTP, SMTP, DNS, SSH) estão rodando na máquina alvo (SERVER_IP).
 
-Serviços Necessários: Instale e rode um servidor HTTP (porta 80) e um servidor FTP (porta 21) na máquina alvo (SERVER_IP).
+Tráfego Misto: Use 5 ou mais máquinas clientes diferentes (ou clientes virtuais) para acessar o servidor simultaneamente, garantindo que o tráfego dos novos protocolos (SMTP, DNS, SSH) seja gerado.
 
-Geração de Carga:
-
-Use pelo menos 5 máquinas (ou dispositivos móveis) para acessar simultaneamente os serviços.
-
-Para gerar volume (e ver os gráficos se moverem), inicie o download de um arquivo grande (vários MB) via HTTP ou FTP a partir das máquinas clientes.
-
-Teste de Drill Down: Clique nas barras do gráfico para confirmar se o modal de protocolos aparece, mostrando a distribuição do tráfego.
+Gere Carga: Baixe arquivos grandes via HTTP/FTP para criar picos de tráfego que o dashboard registrará.
 
 Observações Técnicas
-Comunicação: O frontend (:5173) se comunica com o backend (:8000). O CORS foi configurado no FastAPI para permitir essa comunicação entre portas diferentes.
+Gerenciamento de Estado: O frontend utiliza useState, useEffect e useMemo para garantir que o dashboard seja fluido, reativo e performático.
 
-Performance de Captura: Em ambientes de alta performance, a Scapy em Python pode se tornar um gargalo. Em produção, ferramentas como tshark ou capturadores em modo kernel seriam preferíveis.
+Em produção, prefira usar tshark ou capturadores em modo kernel para performance.
 
-Retenção de Dados: Atualmente, os dados são armazenados apenas em memória (na lista windows). Para retenção a longo prazo, seria necessário integrar um banco de dados de série temporal (como InfluxDB) ou Redis.
+Para retenção a longo prazo, salve dados em Redis/InfluxDB.
